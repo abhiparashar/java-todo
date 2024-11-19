@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1/todos")
 public class TodoController {
     private static List<Todo> todoList;
 
@@ -17,12 +18,12 @@ public class TodoController {
         todoList.add(new Todo(2,false,"assignment", 2));
     }
 
-    @GetMapping("/todos")
+    @GetMapping
     public ResponseEntity<List<Todo>> getTodos(){
         return ResponseEntity.status(HttpStatus.OK).body(todoList);
     }
 
-    @PostMapping("/todos")
+    @PostMapping
     public ResponseEntity<Todo> createTodo(@RequestBody Todo newTodo){
         /*
         @ResponseStatus(HttpStatus.CREATED)
@@ -31,12 +32,48 @@ public class TodoController {
        return ResponseEntity.status(HttpStatus.CREATED).body(newTodo);
     }
 
-    @GetMapping("/todos/{todoId}")
+    @GetMapping("/{todoId}")
     public ResponseEntity<Todo> getSingleTodo(@PathVariable long todoId){
         for (Todo todo:todoList){
             if(todo.getId()==todoId){
                 return ResponseEntity.ok(todo);
             }
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/{todoId}")
+    public ResponseEntity<?> updateTodo(
+            @PathVariable int todoId,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Boolean completed
+    ) {
+        for(Todo todo : todoList) {
+            if(todo.getId() == todoId) {
+                if (title != null) {
+                    todo.setTitle(title);
+                }
+                if (completed != null) {
+                    todo.setCompleted(completed);
+                }
+                return ResponseEntity.ok(todo);
+            }
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{todoId}")
+    public ResponseEntity<?> deleteTodo(@PathVariable Long todoId){
+        Todo removeTodo = null;
+        for(Todo todo:todoList){
+            if(todo.getId()==todoId){
+              removeTodo = todo;
+            }
+        }
+        if(removeTodo != null){
+            todoList.remove(removeTodo);
+            String deleteSuccessMessage = "Todo deleted successfully";
+            return ResponseEntity.status(HttpStatus.OK).body(deleteSuccessMessage);
         }
         return ResponseEntity.notFound().build();
     }

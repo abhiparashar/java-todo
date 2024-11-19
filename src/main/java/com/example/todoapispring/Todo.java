@@ -10,7 +10,7 @@ public class Todo{
 		this.id = id;
 		this.completed = completed;
 		this.title = title;
-		this.userId = userId;
+		this.userId = UserId;
 	}
 
 	public void setId(int id){
