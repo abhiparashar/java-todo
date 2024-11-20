@@ -11,8 +11,9 @@ import java.util.List;
 @RequestMapping("/api/v1/todos")
 public class TodoController {
     private static List<Todo> todoList;
-
-    public TodoController(){
+    private final TodoService todoService;
+    public TodoController(TodoService todoService){
+        this.todoService = todoService;
         todoList = new ArrayList<>();
         todoList.add(new Todo(1,true,"coding",1));
         todoList.add(new Todo(2,false,"assignment", 2));
@@ -20,6 +21,7 @@ public class TodoController {
 
     @GetMapping
     public ResponseEntity<List<Todo>> getTodos(){
+        System.out.println(this.todoService.doSomething());
         return ResponseEntity.status(HttpStatus.OK).body(todoList);
     }
 
